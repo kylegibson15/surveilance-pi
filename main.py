@@ -1,4 +1,4 @@
-from backend.motion_detection import singlemotiondetector
+from backend.motion_detection import singlemotiondetector as smd
 from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
@@ -25,7 +25,7 @@ def index():
 
 def detect_motion(frameCount):
 	global vs, lock, outputFrame
-	md = singlemotiondetector.SingleMotionDetector(accumWeight=0.1)
+	md = smd.SingleMotionDetector(accumWeight=0.1)
 	total = 0
 
 	while True:
@@ -41,8 +41,8 @@ def detect_motion(frameCount):
 			motion = md.detect(gray)
 
 			if motion is not None:
-				(thresh, (minX, minY, maxX, maxY)) = motion
-				cv2.rectangle(frame, (minX, minY), (maxX, maxY), (0, 0, 255), 2)
+				(_, (min_x, min_y, max_x, max_y)) = motion
+				cv2.rectangle(frame, (min_x, min_y), (max_x, max_y), (0, 0, 255), 2)
 		
 		md.update(gray)
 		total += 1
@@ -58,12 +58,12 @@ def generate():
 			if outputFrame is None:
 				continue
 
-			(flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+			(flag, encoded_image) = cv2.imencode(".jpg", outputFrame)
 
 			if not flag:
 				continue
 
-		yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+		yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
 
 @app.route("/video_feed")
 def video_feed():
