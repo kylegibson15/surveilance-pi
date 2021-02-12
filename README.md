@@ -10,5 +10,5 @@ $ pip install flask opencv-contrib-python numpy imutils
 ```
 
 ```shell
-$ python3 webstreaming.py --ip 0.0.0.0 --port 8000
+$ python3 main.py --ip 0.0.0.0 --port 8000
 ```
